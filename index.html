@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Aplicación web para pixelar rostros y proteger la privacidad de las personas en fotografías de forma 100% local en tu navegador." />
+  <title>Pixelador de Rostros — Protege la privacidad de las personas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+
+<body>
+  <div id="app" class="app-layout">
+    <!-- BARRA SUPERIOR (HEADER) -->
+    <header class="app-header">
+      <div class="header-branding">
+        <div class="logo-icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <circle cx="12" cy="11" r="3" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="app-title">Pixelador de Rostros</h1>
+          <p class="app-subtitle">Protege la privacidad de las personas en tus fotografías</p>
+        </div>
+      </div>
+
+      <div class="header-badges">
+        <div class="privacy-badge" title="Tus imágenes nunca salen de este navegador" role="status">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          <span>Procesamiento 100% local en tu dispositivo</span>
+        </div>
+        <button id="btn-info-privacy" class="btn-icon-subtle" title="Información de privacidad y seguridad"
+          aria-label="Información de privacidad">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="16" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12.01" y2="8" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- PANEL DE HERRAMIENTAS (TOOLBAR) -->
+    <nav class="app-toolbar" aria-label="Herramientas de edición">
+      <div class="toolbar-section">
+        <!-- Input de archivo oculto -->
+        <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" class="visually-hidden"
+          aria-label="Seleccionar archivo de imagen" />
+
+        <!-- 1. Botón Importar Fotografía -->
+        <button id="btn-import" class="btn btn-secondary" title="Abrir fotografía desde tu dispositivo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          <span>Importar fotografía</span>
+        </button>
+
+        <!-- 2. Botón Seleccionar Rostros (indicador de modo) -->
+        <button id="btn-select-mode" class="btn btn-tool" title="Modo de marcado de rostros activo" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" />
+            <circle cx="9" cy="10" r="1" />
+            <circle cx="15" cy="10" r="1" />
+            <path d="M9 15h6" />
+          </svg>
+          <span>Seleccionar rostros</span>
+        </button>
+
+        <div class="toolbar-divider" role="separator"></div>
+
+        <!-- Control de Intensidad del pixelado -->
+        <div class="intensity-group" title="Regula el tamaño de los bloques de píxeles">
+          <label for="intensity-slider" class="intensity-label">
+            <span>Intensidad del pixelado:</span>
+            <strong id="intensity-val-label" class="intensity-val">Intenso</strong>
+          </label>
+          <div class="slider-wrapper">
+            <input type="range" id="intensity-slider" min="1" max="3" step="1" value="3"
+              aria-label="Intensidad del pixelado" />
+            <div class="intensity-ticks">
+              <span>Mod</span>
+              <span>Med</span>
+              <span>Int</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar-divider" role="separator"></div>
+
+        <!-- 3. Botón Pixelar Seleccionados (Acción principal destacada) -->
+        <button id="btn-pixelate" class="btn btn-primary btn-cta"
+          title="Aplica el pixelado a todos los rostros marcados" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>
+          <span>Pixelar seleccionados</span>
+          <span class="btn-badge" style="display: none;">0</span>
+        </button>
+      </div>
+
+      <div class="toolbar-section">
+        <!-- 4. Botón Deshacer Cambios -->
+        <button id="btn-undo" class="btn btn-ghost" title="Revertir el último pixelado (Ctrl+Z)" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="1 4 1 10 7 10" />
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+          </svg>
+          <span>Deshacer cambios</span>
+        </button>
+
+        <!-- 5. Botón Restablecer Selección -->
+        <button id="btn-reset" class="btn btn-ghost" title="Eliminar todos los círculos de selección" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+          <span>Restablecer selección</span>
+        </button>
+
+        <!-- 6. Botón Descargar Imagen -->
+        <button id="btn-download" class="btn btn-accent" title="Descargar la imagen procesada" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          <span>Descargar imagen</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- BARRA CONTEXTUAL DE AJUSTE DE CÍRCULO SELECCIONADO (Aparece al seleccionar un círculo) -->
+    <div id="circle-controls-bar" class="circle-controls-bar hidden" role="region"
+      aria-label="Controles del círculo de selección">
+      <div class="circle-controls-content">
+        <div class="circle-info">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <circle cx="12" cy="12" r="4" />
+          </svg>
+          <span id="circle-selected-title">Rostro seleccionado</span>
+        </div>
+
+        <div class="circle-actions">
+          <div class="size-controls">
+            <label for="slider-radius" class="size-label">Tamaño:</label>
+            <button id="btn-radius-minus" class="btn-micro" title="Disminuir tamaño del círculo (-)"
+              aria-label="Disminuir tamaño">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </button>
+            <input type="range" id="slider-radius" min="15" max="300" value="80"
+              aria-label="Radio del círculo seleccionado" />
+            <button id="btn-radius-plus" class="btn-micro" title="Aumentar tamaño del círculo (+)"
+              aria-label="Aumentar tamaño">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="v-divider"></div>
+
+          <button id="btn-delete-circle" class="btn-micro btn-danger" title="Eliminar este círculo (Supr)"
+            aria-label="Eliminar círculo seleccionado">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18" />
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              <line x1="10" y1="11" x2="10" y2="17" />
+              <line x1="14" y1="11" x2="14" y2="17" />
+            </svg>
+            <span>Eliminar círculo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ÁREA DE TRABAJO (WORKSPACE) -->
+    <main class="app-workspace" id="app-workspace">
+      <!-- VISTA INICIAL: DROPZONE (cuando no hay imagen) -->
+      <div id="dropzone" class="dropzone-area" role="button" tabindex="0"
+        aria-label="Área para cargar fotografía. Haz clic o arrastra un archivo aquí.">
+        <div class="dropzone-content">
+          <div class="dropzone-icon-ring">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+          </div>
+          <h2 class="dropzone-heading">Importa una fotografía para comenzar</h2>
+          <p class="dropzone-subheading">Arrastra y suelta tu archivo aquí o haz clic para explorar</p>
+          <div class="dropzone-formats">
+            <span class="format-pill">JPG</span>
+            <span class="format-pill">JPEG</span>
+            <span class="format-pill">PNG</span>
+            <span class="format-pill">WebP</span>
+          </div>
+          <button type="button" class="btn btn-secondary dropzone-browse-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            <span>Examinar archivos</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- VISTA ACTIVA: CONTENEDOR DE EDICIÓN Y CANVASES (cuando hay imagen cargada) -->
+      <div id="canvas-container" class="canvas-container hidden">
+        <!-- Barra de instrucciones y estado -->
+        <div id="workspace-help-bar" class="workspace-help-bar" role="status">
+          <div class="help-info">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+            <span id="help-bar-message">Haz clic sobre cada rostro que quieras pixelar. Puedes seleccionar varias
+              personas antes de aplicar los cambios.</span>
+          </div>
+          <div id="image-meta-info" class="image-meta-info"></div>
+        </div>
+
+        <!-- Marco visual de la imagen con capas Canvas -->
+        <div class="viewport-wrapper" id="viewport-wrapper">
+          <!-- Canvas Base: procesa y dibuja la fotografía a tamaño real/visual -->
+          <canvas id="base-canvas" class="canvas-base"></canvas>
+          <!-- Canvas Overlay: captura clics, arrastres y dibuja círculos interactivos -->
+          <canvas id="overlay-canvas" class="canvas-overlay"></canvas>
+        </div>
+      </div>
+
+      <!-- Indicador de procesamiento / spinner -->
+      <div id="processing-overlay" class="processing-overlay hidden" role="alert" aria-busy="true">
+        <div class="spinner"></div>
+        <p class="processing-text">Procesando imagen con alta resolución...</p>
+      </div>
+    </main>
+
+    <!-- NOTIFICACIONES TOAST -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- MODAL DE DESCARGA / EXPORTACIÓN -->
+    <div id="export-modal" class="modal-backdrop" aria-hidden="true" role="dialog" aria-labelledby="modal-title">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2 id="modal-title" class="modal-heading">Descargar fotografía procesada</h2>
+          <button class="modal-close" aria-label="Cerrar ventana emergente">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-desc">
+            La fotografía se exportará en su resolución nativa con los rostros seleccionados debidamente pixelados. Los
+            círculos y controles visuales no formarán parte del archivo final.
+          </p>
+
+          <div class="meta-preview-box">
+            <span class="meta-label">Dimensiones finales:</span>
+            <strong id="export-info-dimensions">0 × 0 px</strong>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Formato de exportación:</label>
+            <div class="format-options">
+              <label class="radio-card">
+                <input type="radio" name="export-format" id="export-format-png" value="png" checked />
+                <div class="radio-card-content">
+                  <strong>PNG</strong>
+                  <span>Máxima calidad, sin pérdidas</span>
+                </div>
+              </label>
+
+              <label class="radio-card">
+                <input type="radio" name="export-format" id="export-format-jpeg" value="jpeg" />
+                <div class="radio-card-content">
+                  <strong>JPEG</strong>
+                  <span>Tamaño de archivo más ligero</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" id="jpeg-quality-group" style="display: none;">
+            <div class="quality-label-row">
+              <label for="jpeg-quality-slider" class="form-label">Calidad JPEG:</label>
+              <strong id="jpeg-quality-val" class="quality-val">92%</strong>
+            </div>
+            <input type="range" id="jpeg-quality-slider" min="60" max="100" value="92" />
+          </div>
+
+          <div class="form-group">
+            <label for="export-filename" class="form-label">Nombre del archivo:</label>
+            <input type="text" id="export-filename" class="input-text" value="fotografia_pixelada.png"
+              spellcheck="false" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-export-cancel" class="btn btn-secondary">Cancelar</button>
+          <button id="btn-export-confirm" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            <span>Guardar archivo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE INFORMACIÓN Y PRIVACIDAD -->
+    <div id="privacy-modal" class="modal-backdrop" aria-hidden="true" role="dialog"
+      aria-labelledby="privacy-modal-title">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2 id="privacy-modal-title" class="modal-heading">Privacidad y Seguridad Garantizada</h2>
+          <button class="modal-close" id="btn-close-privacy">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="privacy-callout">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <polyline points="9 12 11 14 15 10" />
+            </svg>
+            <p><strong>Las fotografías se procesan localmente en tu navegador y no se envían a nuestros servidores ni a
+                ningún servicio externo.</strong></p>
+          </div>
+
+          <h3 class="section-title">¿Cómo funciona?</h3>
+          <ul class="feature-checklist">
+            <li><strong>Procesamiento en memoria del cliente:</strong> La imagen se decodifica y se manipula
+              exclusivamente mediante la API Canvas de HTML5 en la memoria RAM de tu propio navegador.</li>
+            <li><strong>Sin subidas ni almacenamiento externo:</strong> No se realizan peticiones HTTP con los archivos
+              ni se conecta a ninguna base de datos o servidor.</li>
+            <li><strong>Sin telemetría invasiva:</strong> No rastreamos tus fotografías ni recopilamos metadatos
+              personales.</li>
+            <li><strong>Liberación de recursos:</strong> Cuando cambias de imagen o cierras la pestaña, los objetos
+              creados en memoria se liberan de inmediato.</li>
+          </ul>
+
+          <p class="privacy-note">
+            <em>Nota sobre privacidad:</em> El pixelado altera irreversiblemente los píxeles seleccionados para ocultar
+            los rasgos faciales. Para máxima seguridad, utiliza la intensidad "Intenso" para evitar que algoritmos de
+            reconstrucción puedan deducir características del rostro.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-privacy-ok" class="btn btn-primary">Entendido</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
