@@ -35,56 +35,75 @@ Para ejecutar y compilar este proyecto, necesitas tener instalado en tu equipo:
    - Microsoft Edge 90+
    - Apple Safari 14+
 
-> Para una lista completa y detallada de requisitos técnicos, hardware y compatibilidad, consulta el archivo [REQUIREMENTS.md](file:///e:/Proyectos/PhotoSince/REQUIREMENTS.md).
+> Para una lista completa y detallada de requisitos técnicos, hardware y compatibilidad, consulta el archivo [REQUIREMENTS.md](./REQUIREMENTS.md).
 
 ---
 
 ## 🚀 Instalación y Puesta en Marcha Paso a Paso
 
-### Paso 1: Verificar el entorno
-Abre tu terminal o consola (PowerShell, Command Prompt, Bash o Zsh) y verifica las versiones instaladas:
+### Paso 1: Clonar el repositorio
+Abre tu terminal (PowerShell, CMD, Bash o Zsh) y clona el proyecto con Git:
 
 ```bash
-node -v
-npm -v
+git clone https://github.com/Andrex11/photoSince.git
 ```
 
-### Paso 2: Clonar o acceder a la carpeta del proyecto
+### Paso 2: Entrar al directorio del proyecto
+Accede a la carpeta recién clonada:
+
 ```bash
-cd e:\Proyectos\PhotoSince
+cd photoSince
 ```
 
-### Paso 3: Instalar dependencias
-Instala la única dependencia de desarrollo necesaria (**Vite**):
+### Paso 3: Verificar requisitos de entorno
+Asegúrate de contar con Node.js y npm compatibles:
+
+```bash
+node -v   # Debe ser >= 18.0.0
+npm -v    # Debe ser >= 9.0.0
+```
+
+### Paso 4: Instalar las dependencias
+Instala los paquetes necesarios del proyecto ejecutando:
 
 ```bash
 npm install
 ```
 
-### Paso 4: Iniciar el servidor de desarrollo local
+> [!NOTE]
+> **Compatibilidad con npm 11+ / 12+ (Node.js 22+ y 24+):**
+> Las versiones recientes de npm incorporan una política de seguridad que bloquea la ejecución automática de scripts `postinstall` de paquetes externos.
+> Este proyecto ya incluye en [package.json](./package.json) la directiva `"allowScripts"` para autorizar automáticamente a `esbuild`. Si en algún entorno limpio tu versión de npm muestra la advertencia `npm warn install-scripts ... esbuild`, puedes autorizarlo explícitamente ejecutando:
+> ```bash
+> npm install-scripts approve esbuild
+> ```
+
+### Paso 5: Iniciar el servidor de desarrollo local
+Ejecuta el servidor de desarrollo de Vite:
+
 ```bash
 npm run dev
 ```
 
-La consola mostrará una URL local, normalmente:
+La consola te indicará la URL local activa, por ejemplo:
 ```text
   ➜  Local:   http://localhost:5173/
 ```
-Abre esa dirección en tu navegador web para utilizar la aplicación.
+Abre esa dirección en tu navegador preferido para empezar a usar la aplicación.
 
 ---
 
 ## 🏗️ Otros Comandos Disponibles
 
 ### Compilación para Producción (Build)
-Genera el paquete optimizado y minificado para distribución estática en la carpeta `dist/`:
+Genera el paquete optimizado y minificado listo para desplegar en cualquier servidor estático (en la carpeta `dist/`):
 
 ```bash
 npm run build
 ```
 
 ### Previsualizar el Build de Producción
-Inicia un servidor local para verificar el resultado generado en la carpeta `dist/`:
+Inicia un servidor local rápido para validar el contenido estático generado en la carpeta `dist/`:
 
 ```bash
 npm run preview
